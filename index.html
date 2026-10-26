@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shai Website — AI Chat</title>
+<style>
+:root{--bg:#0b1020;--panel:#121a2e;--panel2:#18233b;--text:#f4f7ff;--muted:#aab6d0;--accent:#6ee7d2;--accent2:#8ca7ff;--line:rgba(255,255,255,.1)}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top right,#17294a 0%,#0b1020 55%);color:var(--text);font-family:Tahoma,Arial,sans-serif;min-height:100vh;display:flex}
+.app{display:grid;grid-template-columns:280px 1fr;width:100%;min-height:100vh}
+.sidebar{background:rgba(9,14,29,.78);border-left:1px solid var(--line);padding:24px 18px;display:flex;flex-direction:column;gap:20px}
+.brand{display:flex;align-items:center;gap:12px;font-size:20px;font-weight:800;direction:ltr;justify-content:flex-end}
+.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#0b1020;font-size:23px;font-weight:900;box-shadow:0 8px 28px #6ee7d233}
+.newchat{border:1px solid #6ee7d277;background:#6ee7d211;color:var(--text);padding:13px;border-radius:13px;font-size:15px;cursor:pointer;text-align:center}
+.side-note{color:var(--muted);font-size:13px;line-height:1.9;margin-top:4px}
+.sidebar-bottom{margin-top:auto;color:#8390ad;font-size:12px;line-height:1.8}
+.main{display:flex;flex-direction:column;min-width:0;min-height:100vh}
+.topbar{padding:20px 28px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topbar h1{font-size:19px;margin:0}
+.badge{font-size:12px;color:var(--accent);border:1px solid #6ee7d244;background:#6ee7d211;border-radius:999px;padding:7px 11px}
+.content{width:min(850px,100%);margin:0 auto;padding:28px 22px 18px;display:flex;flex-direction:column;flex:1}
+.welcome{text-align:center;margin:auto 0 22px;padding:12px 0}
+.big-logo{width:70px;height:70px;border-radius:24px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0b1020;display:grid;place-items:center;font-size:34px;font-weight:900;margin:0 auto 20px;box-shadow:0 10px 40px #6ee7d222}
+.welcome h2{font-size:clamp(25px,4vw,38px);margin:0 0 12px}
+.welcome p{color:var(--muted);line-height:1.9;margin:0 auto;max-width:560px}
+.suggestions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:22px 0 28px}
+.suggestion{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:right;color:#dce5ff;cursor:pointer;line-height:1.7;transition:.2s}
+.suggestion:hover{border-color:#6ee7d288;background:#6ee7d20c}
+.messages{display:flex;flex-direction:column;gap:16px;padding-bottom:18px}
+.message{max-width:88%;padding:14px 16px;border-radius:17px;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere}
+.user{align-self:flex-start;background:#24314e;border:1px solid #ffffff12;border-bottom-left-radius:5px}
+.bot{align-self:flex-end;background:rgba(110,231,210,.08);border:1px solid #6ee7d22b;border-bottom-right-radius:5px}
+.label{display:block;color:var(--accent);font-size:11px;margin-bottom:5px}
+.composer{position:sticky;bottom:0;background:linear-gradient(180deg,transparent,#0b1020 25%);padding:18px 0 8px}
+.input-wrap{display:flex;align-items:flex-end;gap:10px;background:#151e33;border:1px solid #ffffff1a;border-radius:18px;padding:10px;box-shadow:0 14px 40px #0003}
+textarea{flex:1;resize:none;min-height:48px;max-height:140px;border:0;outline:0;background:transparent;color:var(--text);font:16px Tahoma,Arial,sans-serif;padding:12px;line-height:1.6}
+textarea::placeholder{color:#8e9bb7}
+.send{height:48px;min-width:52px;border:0;border-radius:13px;background:linear-gradient(135deg,var(--accent),#9bf0d8);color:#0b1020;font-size:21px;font-weight:bold;cursor:pointer}
+.send:disabled{opacity:.5;cursor:not-allowed}
+.disclaimer{text-align:center;color:#8290ac;font-size:11px;line-height:1.8;margin-top:10px}
+@media(max-width:760px){.app{grid-template-columns:1fr}.sidebar{display:none}.topbar{padding:16px 18px}.content{padding:22px 14px 14px}.suggestions{grid-template-columns:1fr}.message{max-width:95%}.welcome{margin-top:40px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><span>Shai Website</span><div class="logo">✦</div></div>
+    <button class="newchat" id="newChat">＋ نئی چیٹ شروع کریں</button>
+    <div class="side-note">آپ کا ذاتی AI چیٹ اسسٹنٹ<br>سوال پوچھیں، خیالات لکھیں، یا کسی کام میں مدد لیں۔</div>
+    <div class="sidebar-bottom">یہ ایک ابتدائی ویب ڈیزائن ہے۔<br>حقیقی AI جوابات کے لیے محفوظ AI API کنکشن درکار ہوگا۔</div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><h1>AI چیٹ اسسٹنٹ</h1><span class="badge">ڈیمو ورژن</span></header>
+    <section class="content">
+      <div class="welcome" id="welcome">
+        <div class="big-logo">✦</div>
+        <h2>السلام علیکم! 👋</h2>
+        <p>میں آپ کی مدد کے لیے حاضر ہوں۔ نیچے اپنا سوال لکھیں یا شروع کرنے کے لیے کوئی مثال منتخب کریں۔</p>
+        <div class="suggestions">
+          <button class="suggestion">✍️ میرے لیے ایک اچھا پیغام لکھیں</button>
+          <button class="suggestion">💡 کاروبار کے لیے نئے آئیڈیاز دیں</button>
+          <button class="suggestion">📚 کوئی مشکل بات آسان اردو میں سمجھائیں</button>
+          <button class="suggestion">🌐 ویب سائٹ بنانے میں میری مدد کریں</button>
+        </div>
+      </div>
+      <div class="messages" id="messages" aria-live="polite"></div>
+      <div class="composer">
+        <div class="input-wrap">
+          <textarea id="prompt" rows="1" placeholder="اپنا سوال یہاں لکھیں..." aria-label="اپنا سوال لکھیں"></textarea>
+          <button class="send" id="send" aria-label="پیغام بھیجیں">➤</button>
+        </div>
+        <div class="disclaimer">یہ نمونہ چیٹ انٹرفیس ہے؛ ابھی حقیقی AI سروس سے منسلک نہیں۔</div>
+      </div>
+    </section>
+  </main>
+</div>
+<script>
+const promptBox=document.getElementById('prompt');
+const sendBtn=document.getElementById('send');
+const messages=document.getElementById('messages');
+const welcome=document.getElementById('welcome');
+function addMessage(text,who){
+  const el=document.createElement('div'); el.className='message '+who;
+  const label=document.createElement('span'); label.className='label'; label.textContent=who==='user'?'آپ':'Shai AI';
+  const body=document.createElement('div'); body.textContent=text;
+  el.append(label,body); messages.appendChild(el); el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function demoReply(q){
+ const s=q.toLowerCase();
+ if(s.includes('ویب سائٹ')||s.includes('website')||s.includes('سائٹ')) return 'ویب سائٹ بنانے کے لیے پہلے اس کا مقصد طے کریں، پھر صفحات اور ڈیزائن بنائیں، اور آخر میں ہوسٹنگ پر پبلش کریں۔ نوٹ: اس وقت میں ڈیمو موڈ میں ہوں، اس لیے جواب مثال کے طور پر دکھایا جا رہا ہے۔';
+ if(s.includes('سلام')||s.includes('السلام')) return 'وعلیکم السلام! 😊 بتائیں، میں آپ کی کس طرح مدد کر سکتا ہوں؟ یہ فی الحال ڈیمو جواب ہے۔';
+ if(s.includes('پیغام')||s.includes('لکھ')) return 'ضرور! اپنا مقصد، کس کے لیے پیغام ہے، اور مطلوبہ انداز بتا دیں۔ میں آپ کے لیے پیغام تیار کرنے میں مدد کر سکتا ہوں۔ یہ فی الحال ڈیمو موڈ ہے۔';
+ return 'آپ کا سوال موصول ہو گیا۔ یہ ویب سائٹ ابھی ڈیمو موڈ میں ہے، اس لیے حقیقی AI جواب دینے کے لیے مالک کو ایک AI API محفوظ سرور کے ذریعے جوڑنی ہوگی۔ اس کے بعد یہ چیٹ سوالات کے حقیقی جواب دے سکے گی۔';
+}
+function submit(){
+ const q=promptBox.value.trim(); if(!q)return;
+ welcome.style.display='none'; addMessage(q,'user'); promptBox.value=''; promptBox.style.height='auto';
+ sendBtn.disabled=true;
+ setTimeout(()=>{addMessage(demoReply(q),'bot');sendBtn.disabled=false;promptBox.focus()},450);
+}
+sendBtn.addEventListener('click',submit);
+promptBox.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submit()}});
+promptBox.addEventListener('input',()=>{promptBox.style.height='auto';promptBox.style.height=Math.min(promptBox.scrollHeight,140)+'px'});
+document.querySelectorAll('.suggestion').forEach(b=>b.addEventListener('click',()=>{promptBox.value=b.textContent.replace(/^[^\s]+\s*/, '').trim();submit()}));
+document.getElementById('newChat').addEventListener('click',()=>{messages.innerHTML='';welcome.style.display='block';promptBox.value='';promptBox.focus()});
+</script>
+</body>
+</html>
